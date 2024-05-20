@@ -1,7 +1,5 @@
-from cgitb import text
-from time import sleep
+import time
 from tokenize import String
-from debugpy import connect
 from pytube import YouTube
 from sys import argv
 import sys
@@ -9,16 +7,27 @@ from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWid
 from PyQt5.QtGui import QPixmap
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QCursor
+import validators
 
 # Dowload function
 
-
-def on_dowload():
+def download():
     textboxValue = textbox.text()
     yt = YouTube(textboxValue)
     yd = yt.streams.get_highest_resolution()
     yd.download("D:\python projects\youtube downloader")
     textbox.setText('')
+
+
+def on_dowload():
+    response = validators.url(textbox.text())
+    if response == True :
+       error.setText('')
+       time.sleep(10)
+       if error.text() == '' :
+          download()
+    else:
+        error.setText('Not a valid url. Please try another!')
 
 
 def complete_function(stream, file):
@@ -60,14 +69,14 @@ lBytes.setStyleSheet(
     "font-size: 18px;"
 )
 
-# # Bytes label
-# lBytes = QLabel()
-# lBytes.resize(10, 10)
-# lBytes.setAlignment(QtCore.Qt.AlignCenter)
-# lBytes.setStyleSheet(
-#     "color: black;" +
-#     "font-size: 18px;"
-# )
+# error label
+error = QLabel()
+error.resize(10, 10)
+error.setAlignment(QtCore.Qt.AlignCenter)
+error.setStyleSheet(
+    "color: black;" +
+    "font-size: 18px;"
+)
 
 # Set the button
 dButton = QPushButton("DOWNLOAD")
@@ -87,7 +96,7 @@ dButton.clicked.connect(on_dowload)
 
 grid.addWidget(label, 0, 1)
 grid.addWidget(textbox, 0, 1)
-grid.addWidget(lBytes, 1, 1)
+grid.addWidget(error, 1, 1)
 grid.addWidget(dButton, 2, 1)
 
 window.setLayout(grid)
